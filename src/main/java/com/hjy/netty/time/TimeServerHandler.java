@@ -13,13 +13,10 @@ public class TimeServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        ByteBuf buf = (ByteBuf)msg;
-        byte[] req = new byte[buf.readableBytes()]; // 获取缓冲区可读的字节数，并以此大小创建字节数组
-        buf.readBytes(req); // 写到req里
-        String body = new String(req,"UTF-8").substring(0,req.length-System.getProperty("line.separator").length());
+        String body = (String)msg;
         System.out.println("time server received order:" + body + ";count:" + ++count);
         String currentTime = "Query Time Order".equalsIgnoreCase(body)?new Date().toString():"Bad order";
-        currentTime += "\n";
+        currentTime += System.getProperty("line.separator");
         ByteBuf resp = Unpooled.copiedBuffer(currentTime.getBytes());
         ctx.write(resp); // write方法写入缓冲区中
     }
